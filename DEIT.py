@@ -45,7 +45,6 @@ class CustomLoss(nn.Module):
         return loss
 
 def plot_ROC_curve(target, output, train_ds, positive_class, name):
-    pdb.set_trace()
     positive_key = list(train_ds.dataset.class_to_idx.keys())[positive_class]
     roc_target = [int(x.item() == positive_class) for x in target]
     scores =  [x for x in output]
@@ -101,7 +100,6 @@ model.head = torch.nn.Linear(in_features = 768, out_features = 5, bias = True)
 model.head_dist = torch.nn.Linear(in_features = 768, out_features = 5, bias = True)
 model.eval()
 model = model.cuda()
-pdb.set_trace()
 transform = transforms.Compose([
     transforms.Resize(224, interpolation=3),
     # transforms.CenterCrop(224),
@@ -244,101 +242,3 @@ ax.set_ylabel('True')
 ax.xaxis.tick_top()
 ax.xaxis.set_label_position('top')
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# model = torch.hub.load('facebookresearch/deit:main', 'deit_base_patch16_224', pretrained=True)
-# model.eval()
-# scripted_model = torch.jit.script(model)
-# scripted_model.save("fbdeit_scripted.pt")
-
-# # Use 'fbgemm' for server inference and 'qnnpack' for mobile inference
-# backend = "fbgemm" # replaced with qnnpack causing much worse inference speed for quantized model on this notebook
-# model.qconfig = torch.quantization.get_default_qconfig(backend)
-# torch.backends.quantized.engine = backend
-
-# quantized_model = torch.quantization.quantize_dynamic(model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8)
-# scripted_quantized_model = torch.jit.script(quantized_model)
-# scripted_quantized_model.save("fbdeit_scripted_quantized.pt")
-
-# out = scripted_quantized_model(img)
-# clsidx = torch.argmax(out)
-# print(clsidx.item())
-# # The same output 269 should be printed
-
-# from torch.utils.mobile_optimizer import optimize_for_mobile
-# optimized_scripted_quantized_model = optimize_for_mobile(scripted_quantized_model)
-# optimized_scripted_quantized_model.save("fbdeit_optimized_scripted_quantized.pt")
-
-# out = optimized_scripted_quantized_model(img)
-# clsidx = torch.argmax(out)
-# print(clsidx.item())
-# # Again, the same output 269 should be printed
-
-# optimized_scripted_quantized_model._save_for_lite_interpreter("fbdeit_optimized_scripted_quantized_lite.ptl")
-# ptl = torch.jit.load("fbdeit_optimized_scripted_quantized_lite.ptl")
-
-# # import pdb; pdb.set_trace()
-# with torch.autograd.profiler.profile(use_cuda=True) as prof1:
-#     out = model(img)
-# with torch.autograd.profiler.profile(use_cuda=True) as prof2:
-#     out = scripted_model(img)
-# with torch.autograd.profiler.profile(use_cuda=True) as prof3:
-#     out = scripted_quantized_model(img)
-# with torch.autograd.profiler.profile(use_cuda=True) as prof4:
-#     out = optimized_scripted_quantized_model(img)
-# with torch.autograd.profiler.profile(use_cuda=True) as prof5:
-#     out = ptl(img)
-
-# print("original model: {:.2f}ms".format(prof1.self_cpu_time_total/1000))
-# print("scripted model: {:.2f}ms".format(prof2.self_cpu_time_total/1000))
-# print("scripted & quantized model: {:.2f}ms".format(prof3.self_cpu_time_total/1000))
-# print("scripted & quantized & optimized model: {:.2f}ms".format(prof4.self_cpu_time_total/1000))
-# print("lite model: {:.2f}ms".format(prof5.self_cpu_time_total/1000))
-
-# import pandas as pd
-# import numpy as np
-
-# df = pd.DataFrame({'Model': ['original model','scripted model', 'scripted & quantized model', 'scripted & quantized & optimized model', 'lite model']})
-# df = pd.concat([df, pd.DataFrame([
-#     ["{:.2f}ms".format(prof1.self_cpu_time_total/1000), "0%"],
-#     ["{:.2f}ms".format(prof2.self_cpu_time_total/1000),
-#      "{:.2f}%".format((prof1.self_cpu_time_total-prof2.self_cpu_time_total)/prof1.self_cpu_time_total*100)],
-#     ["{:.2f}ms".format(prof3.self_cpu_time_total/1000),
-#      "{:.2f}%".format((prof1.self_cpu_time_total-prof3.self_cpu_time_total)/prof1.self_cpu_time_total*100)],
-#     ["{:.2f}ms".format(prof4.self_cpu_time_total/1000),
-#      "{:.2f}%".format((prof1.self_cpu_time_total-prof4.self_cpu_time_total)/prof1.self_cpu_time_total*100)],
-#     ["{:.2f}ms".format(prof5.self_cpu_time_total/1000),
-#      "{:.2f}%".format((prof1.self_cpu_time_total-prof5.self_cpu_time_total)/prof1.self_cpu_time_total*100)]],
-#     columns=['Inference Time', 'Reduction'])], axis=1)
-
-# print(df)
